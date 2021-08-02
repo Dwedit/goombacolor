@@ -12,6 +12,16 @@ endif
 
 include $(DEVKITARM)/gba_rules
 
+#-------------------------------------------------------------------------------------
+# canned command sequence for binary data  (copy-pasted from old version of devkitpro)
+#-------------------------------------------------------------------------------------
+define bin2o_old
+	bin2s $< | $(AS) -o $(@)
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' -e 's/[^A-Za-z0-9_]/_/g')`"_end[];" > `(echo $(<F) | tr . _)`.h
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' -e 's/[^A-Za-z0-9_]/_/g')`"[];" >> `(echo $(<F) | tr . _)`.h
+	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' -e 's/[^A-Za-z0-9_]/_/g')`_size";" >> `(echo $(<F) | tr . _)`.h
+endef
+
 #--------
 # Overrides for default rules
 
@@ -161,15 +171,15 @@ DEPENDS	:=	$(OFILES:.o=.d)
 
 %.o	:	%.lz77
 	@echo $(notdir $<)
-	@$(bin2o)
+	@$(bin2o_old)
 
 %.o	:	%.bin
 	@echo $(notdir $<)
-	@$(bin2o)
+	@$(bin2o_old)
 
 %.o	:	%.gba
 	@echo $(notdir $<)
-	@$(bin2o)
+	@$(bin2o_old)
 
 
 #---------------------------------------------------------------------------------
