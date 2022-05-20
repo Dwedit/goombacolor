@@ -163,6 +163,9 @@ void flush_end_sram()
 
 void probe_sram_size()
 {
+	//probe only once for a 64K SRAM build and we already detected a 32K SRAM size.
+	if (SRAM_SIZE == 64 && save_start == SAVE_START_32K) return;
+
 	vu8* sram=MEM_SRAM;
 	vu8* sram2=MEM_SRAM + 0x8000;
 	u32 val1;

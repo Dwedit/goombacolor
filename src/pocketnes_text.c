@@ -363,7 +363,7 @@ void drawtextl(int row,const char *str,int hilite, int len)
 			}
 			for (;i<29;i++)
 			{
-				*dest=' ';
+				*dest++=' ';
 			}
 		}
 	}
