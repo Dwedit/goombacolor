@@ -254,7 +254,7 @@ _F4:@	Shantae Speed Hack (replaces 7 instructions)
 	@ld a,c		4
 	@add a,0x7E	8		(0x7B for wendy)
 	@ld c,a		4
-	@jc nc,138a	8/12
+	@jr nc,+1	8/12
 	@inc b		4
 	@pop de		12
 	@dec e		4

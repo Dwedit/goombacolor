@@ -86,7 +86,6 @@ extern u8 request_gba_mode;
 
 extern u8 g_hackflags;
 extern u32 num_speedhacks;
-extern u16 speedhacks[256];
 
 extern u8 gbc_mode;
 extern u8 sgb_mode;
@@ -170,9 +169,7 @@ int gettime(void);			//io.s
 
 /*
 //memory.s
-extern u32 sram_R[];
 extern u32 sram_W[];
-extern u32 rom_R60[];
 extern u32 empty_W[];
 */
 
@@ -228,44 +225,6 @@ void copy_map_and_compare(u8 *destAddress, u8 *sourceAddress, int byteCount, u8*
 
 
 void update_lcdhack(void);
-
-//ppu.s
-/*
-extern u32 *vblankfptr;			//from ppu.s
-extern u32 vbldummy;			//from ppu.s
-extern u32 vblankinterrupt;		//from ppu.s
-extern u32 AGBinput;			//from ppu.s
-extern u32 EMUinput;
-
-void debug_(int,int);		//ppu.s
-void paletteinit(void);		//ppu.s
-void PaletteTxAll(void);	//ppu.s
-
-void PPU_reset(void);
-void PPU_init(void);
-
-extern u32 FPSValue;		//from ppu.s
-extern char fpsenabled;		//from ppu.s
-extern char gammavalue;		//from ppu.s
-extern char twitch;			//from ppu.s
-extern char flicker;		//from ppu.s
-extern u32 wtop;			//from ppu.s
-
-extern u32 ppustate[8];
-extern u16 agb_pal[48];
-extern u32 agb_nt_map[4];
-
-*/
-
-//sound.s
-/*
-void make_freq_table(void);
-extern u16* freqtbl;
-extern u16 FREQTBL2[2048];
-*/
-
-/*
-*/
 
 //visoly.s
 void doReset(void);

@@ -151,7 +151,7 @@ void errmsg(char *s) {
 
 void flush_end_sram()
 {
-	u8* sram=MEM_SRAM;
+	vu8* sram=MEM_SRAM;
 	int i;
 	int save_end = save_start + 0x2000;
 	for (i=save_start;i<save_end;i++)
@@ -237,7 +237,7 @@ void getsram()	//copy GBA sram to sram_copy
 		//compressed_save = NULL;
 	}
 	
-	u8 *sram = MEM_SRAM;
+	vu8 *sram = MEM_SRAM;
 	u8 *sramCopy = sram_copy;
 	u32 *sramCopy32 = (u32*)sramCopy;
 	

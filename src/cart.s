@@ -443,8 +443,6 @@ lc1:				@call mapper*init
 @	stmia r5,{r1-r4}
 	mov pc,r0		@Jump to MapperInit
 0:
-@	bl mirror1_		;(call after mapperinit to allow mappers to set up cartflags first)
-	
 	#if LITTLESOUNDDJ
 	@Little Sound DJ stuff
 	ldrb_ r0,sramsize
@@ -674,21 +672,6 @@ DMGBIOS:
 @	INCBIN DMGBIOS.ROM
 @	% 256
 
-@----------------------------------------------------------------------------
-@mirror1_
-@	ldr r0,=m0000
-@	stmfd sp!,{r0,r3-r5,lr}
-@
-@	ldr r0,[sp],#4
-@	ldr r3,[r0],#4
-@
-@	ldr r1,=vram_map+32
-@	ldmia r0!,{r2-r5}
-@	stmia r1,{r2-r5}
-@	ldr r1,=agb_nt_map
-@	ldmia r0!,{r2-r5}
-@	stmia r1,{r2-r5}
-@	ldmfd sp!,{r3-r5,pc}
 @----------------------------------------------------------------------------
 mapBIOS_:
 @----------------------------------------------------------------------------
