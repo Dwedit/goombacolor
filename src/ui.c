@@ -12,9 +12,6 @@ EWRAM_BSS int mainmenuitems;//? or CARTMENUITEMS, depending on whether saving is
 #define ARRSIZE(xxxx) (sizeof((xxxx))/sizeof((xxxx)[0]))
 #endif
 
-int savestate(void* dest){return 0;}
-void loadstate(int foo, void* dest){}
-
 #if !CARTSRAM
 //void savestatemenu(){} void loadstatemenu(){} void managesram(){}
 void quicksave(){} void quickload(){}
@@ -148,7 +145,8 @@ u32 getmenuinput(int menuitems)
 
 void ui()
 {
-	int key,soundvol,tm0cnt,i;
+	int key,soundvol,tm0cnt;
+	//int i;
 	int mb=(u32)textstart<0x8000000;
 	int savesuccess=1;
 	int usefade=1;

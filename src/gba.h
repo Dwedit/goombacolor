@@ -37,7 +37,7 @@ extern u8 g_sramsize;
 #endif
 
 #define MEM_PALETTE ((vu16*)0x5000000)
-#define MEM_VRAM ((u8*)0x6000000)
+#define MEM_VRAM ((vu16*)0x6000000)
 #define MEM_OAM ((vu32*)0x7000000)
 #define MEM_SRAM ((vu8*)0xE000000)
 #define INTR_VECT (*(u32*)0x3007FFC)

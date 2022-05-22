@@ -3,7 +3,6 @@
 
 #define MAX_CACHE_SIZE 16
 
-extern u8 *const bank_0;
 extern u8 *const bank_1;
 
 extern u8* cache_location[MAX_CACHE_SIZE];

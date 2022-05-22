@@ -25,7 +25,9 @@
 	global_func memset32_
 	global_func memcpy32_
 	global_func memset32
+	global_func memset32_to_vram
 	global_func memcpy32
+	global_func memcpy32_to_vram
 	global_func memcpy_unaligned_src
 	
 	.global sram_W2_modify
@@ -147,6 +149,7 @@ echo_W:
 
 
 memset32:
+memset32_to_vram:
 @word aligned only
 @r0 = dest, r1 = data, r2 = byte count
 @if byte count is not word aligned, will overwrite more bytes until aligned
@@ -183,6 +186,7 @@ memset32:
 	subs r2,r2,#4
 	bgt 0b
 	bx lr
+memcpy32_to_vram:
 memcpy32:
 @dest and source must be word-aligned, count may be unaligned
 @r0=dest, r1=src, r2=byte count
@@ -222,8 +226,12 @@ memcpy32:
 	@fall thru to bytecopy_plus4
 
 global_func bytecopy
+global_func bytecopy_from_sram
+global_func bytecopy_to_sram
 bytecopy_plus4:
 	add r2,r2,#4
+bytecopy_from_sram:
+bytecopy_to_sram:
 bytecopy:
 	ldrb r12,[r1],#1
 	strb r12,[r0],#1

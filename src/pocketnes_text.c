@@ -130,7 +130,7 @@ void loadfont()
 }
 void loadfontpal()
 {
-	memcpy32(FONT_PAL,&fontpal_bin,64);
+	memcpy32_to_vram(FONT_PAL,&fontpal_bin,64);
 }
 void get_ready_to_display_text()
 {

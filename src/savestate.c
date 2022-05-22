@@ -89,9 +89,9 @@ typedef enum
 	_Failed
 } LoadStateError;
 
-static u32 GetTagName(int tagId)
+static u32 GetTagName(size_t tagId)
 {
-	if (tagId < 0 || tagId >= ARRSIZE(tags))
+	if (tagId >= ARRSIZE(tags))
 	{
 		return 0;
 	}
@@ -105,7 +105,7 @@ static u32 GetTagName(int tagId)
 
 static int GetTagId(u32 tagName)
 {
-	for (int i = 0; i < ARRSIZE(tags); i++)
+	for (size_t i = 0; i < ARRSIZE(tags); i++)
 	{
 		u32 otherTag = GetTagName(i);
 		if (otherTag == tagName)
@@ -159,7 +159,7 @@ LoadStateError LoadState(u8 *source, int maxLength)
 int SaveState(u8 *dest)
 {
 	u8 *startPosition = dest;
-	for (int i=0; i < ARRSIZE(tags); i++)
+	for (size_t i=0; i < ARRSIZE(tags); i++)
 	{
 		u32 tagName = GetTagName(i);
 		int size = saveFunc[i](dest + 8);

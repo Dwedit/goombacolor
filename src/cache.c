@@ -58,8 +58,8 @@ u8 *make_instant_pages(u8* rom_base)
 //	if (cartsizebyte>0)
 	{
 		//copy bank 0 to VRAM
-//		memcpy(bank_1,page0_rom,16384);
-		memcpy(bank_1,page0_rom,16384+CRAP_AMOUNT);
+//		memcpy32(bank_1,page0_rom,16384);
+		memcpy32(bank_1,page0_rom,16384+CRAP_AMOUNT);
 		INSTANT_PAGES[0]=bank_1;
 	}
 	return page0_rom;

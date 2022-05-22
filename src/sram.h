@@ -29,7 +29,9 @@ typedef struct {		//(modified stateheader)
 	char reserved4[32];  //="CFG"
 } configdata;
 
-void bytecopy(u8 *dst,u8 *src,int count);
+//"bytecopy_to_sram" and "bytecopy_from_sram" are just different names for "bytecopy"
+void bytecopy_to_sram(vu8 *dst,const u8 *src,int count);
+void bytecopy_from_sram(u8 *dst,const vu8 *src,int count);
 void flush_end_sram(void);
 void flush_xgb_sram(void);
 void getsram(void);
@@ -44,7 +46,7 @@ int updatestates(int index,int erase,int type);
 int twodigits(int n,char *s);
 void getstatetimeandsize(char *s,int time,u32 size,u32 freespace);
 stateheader* drawstates(int menutype,int *menuitems,int *menuoffset, int needed_size);
-void compressstate(lzo_uint size,u16 type,const u8 *src, u8 *dest, void *workspace);
+void compressstate(lzo_uint size,u16 type,const vu8 *src, u8 *dest, void *workspace);
 void managesram(void);
 void savestatemenu(void);
 int findstate(u32 checksum,int type,stateheader **stateptr);
@@ -53,7 +55,7 @@ int using_flashcart(void);
 void quickload(void);
 void quicksave(void);
 int backup_gb_sram(int called_from);
-int save_new_sram(u8 *SRAM_SOURCE);
+int save_new_sram(vu8 *SRAM_SOURCE);
 int get_saved_sram(void);
 void register_sram_owner(void);
 void no_sram_owner(void);

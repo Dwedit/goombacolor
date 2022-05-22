@@ -160,7 +160,7 @@ extern int bcolor;		//Border Color
 extern u32 joycfg;				//from io.s
 //void resetSIO(u32);				//io.s
 void vbaprint(const char *text);		//io.s
-void LZ77UnCompVram(const void *source,u16 *destination);		//io.s
+void LZ77UnCompVram(const void *source,vu16 *destination);		//io.s
 void waitframe(void);			//io.s
 int CheckGBAVersion(void);		//io.s
 void suspend(void);			//io.s
@@ -216,9 +216,14 @@ extern u8* _gb_oam_buffer_alt;
 
 extern u8 dirty_map_words[];
 
+//memcpy32 and memcpy32_to_vram (along with memset32 and memset32_to_vram)
+//are two different names for the exact same function, but the
+//destination parameter is declared as volatile u16* to suppress warnings.
 void memcpy32(void *dest, const void *src, int byteCount);
+void memcpy32_to_vram(vu16 *dest, const void *src, int byteCount);
 void memset32(void *dest, u32 value, int byteCount);
-void memset8(u8 *dest, u8 value, int byteCount);
+void memset32_to_vram(vu16 *dest, u32 value, int byteCount);
+void memset8(vu8 *dest, u8 value, int byteCount);
 void memcpy_unaligned_src(void *dest, const void *src, int byteCount);
 
 void copy_map_and_compare(u8 *destAddress, u8 *sourceAddress, int byteCount, u8* dirtyMapWordsPtr);

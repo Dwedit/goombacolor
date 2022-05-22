@@ -1,10 +1,6 @@
 #include "includes.h"
 
-//#define UI_TILEMAP_NUMBER 30
-//#define SCREENBASE (u16*)(MEM_VRAM+UI_TILEMAP_NUMBER*2048)
-//#define FONT_MEM (u16*)(MEM_VRAM+0x4000)
-#define COLOR_ZERO_TILES (u16*)(MEM_VRAM+0xC000)
-
+#define COLOR_ZERO_TILES (vu16*)((vu8*)MEM_VRAM+0xC000)
 
 #if MOVIEPLAYER
 int usinggbamp;
@@ -253,7 +249,7 @@ void C_entry()
 	if(!pogoshell)
 	#endif
 	{
-		int gbx_id=0x6666edce;
+		u32 gbx_id=0x6666edce;
 		u8 *p;
 		u8 *q;
 
@@ -343,7 +339,7 @@ void C_entry()
 	REG_DISPCNT=0;					//screen ON, MODE0
 	
 	//clear VRAM
-	memset32(MEM_VRAM,0,0x18000);
+	memset32_to_vram(MEM_VRAM, 0, 0x18000);
 	
 	//new: load VRAM code
 	extern u8 __vram1_start[], __vram1_lma[], __vram1_end[];
@@ -393,7 +389,7 @@ void splash(const u16 *splashImage)
 	int i;
 
 	REG_DISPCNT=FORCE_BLANK;	//screen OFF
-	memcpy((u16*)MEM_VRAM,splashImage,240*160*2);
+	memcpy32_to_vram((vu16*)MEM_VRAM,splashImage,240*160*2);
 	waitframe();
 	REG_BG2CNT=0x0000;
 	REG_DISPCNT=BG2_EN|MODE3;
