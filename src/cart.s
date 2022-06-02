@@ -22,10 +22,7 @@
 	global_func map4567_
 @	EXPORT map01234567_
 	global_func mapAB_
- .if SAVESTATES
-	global_func savestate
-	global_func loadstate
- .endif
+
 	.global g_emuflags
 	.global g_sramsize
 	.global g_rammask
@@ -546,126 +543,6 @@ biosloop:
 	cmp r1,#0x200
 	bne biosloop
 	bx lr
-
- .if SAVESTATES
-
-@----------------------------------------------------------------------------
-savestate:	@called from ui.c.
-@int savestate(void *here): copy state to <here>, return size
-@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r6,globalptr,lr}
-
-	ldr globalptr,=GLOBAL_PTR_BASE
-
-	ldr_ r2,rombase
-	rsb r2,r2,#0			@adjust rom maps,etc so they aren't based on rombase
-	bl fixromptrs			@(so savestates are valid after moving roms around)
-
-	mov r6,r0			@r6=where to copy state
-	mov r0,#0			@r0 holds total size (return value)
-
-	adr r4,savelst			@r4=list of stuff to copy
-	mov r3,#(lstend-savelst)/8	@r3=items in list
-ss1:	ldr r2,[r4],#4				@r2=what to copy
-	ldr r1,[r4],#4				@r1=how much to copy
-	add r0,r0,r1
-ss0:	ldr r5,[r2],#4
-	str r5,[r6],#4
-	subs r1,r1,#4
-	bne ss0
-	subs r3,r3,#1
-	bne ss1
-
-	ldr_ r2,rombase
-	bl fixromptrs
-
-	ldmfd sp!,{r4-r6,globalptr,lr}
-	bx lr
-
-
-@saveversion DCB "A005"
-@@AF,BC,DE,HL,SP,PC
-@
-@savetags DCB "VERS","CFG ","REGS","RAM ","HRAM","VRAM","RAM2","SRAM","PAL ","MAPR","BANK","CPUS","GFXS"
-@savesizes DCB 4,4,
-
-@savelst	DCD rominfo,4,XGB_RAM,0x2080,XGB_VRAM,0x2000,XGB_SRAM,0x8000,GBOAM_BUFFER,0xA0,gbc_palette,128
-@	DCD mapperstate,32,rommap,16,cpustate,52,lcdstate,16
-@lstend
-
-@savelst	DCD rominfo,4,XGB_RAM,0x2080,XGB_VRAM,0x2000,XGB_SRAM,0x8000,GBOAM_BUFFER,0xA0,agb_pal,96
-@	DCD vram_map,64,agb_nt_map,16,mapperstate,32,rommap,16,cpustate,52,lcdstate,16
-
-
-fixromptrs:	@add r2 to some things
-	adr_ r1,memmap_tbl
-	ldmia r1,{r3-r6}
-	add r3,r3,r2
-	add r4,r4,r2
-	add r5,r5,r2
-	add r6,r6,r2
-	stmia r1,{r3-r6}
-	adr_ r1,memmap_tbl+16
-	ldmia r1,{r3-r6}
-	add r3,r3,r2
-	add r4,r4,r2
-	add r5,r5,r2
-	add r6,r6,r2
-	stmia r1,{r3-r6}
-
-	ldr_ r3,lastbank
-	add r3,r3,r2
-	str_ r3,lastbank
-
-	ldr_ r3,cpuregs+6*4	@GB-Z80 PC
-	add r3,r3,r2
-	str_ r3,cpuregs+6*4
-
-	mov pc,lr
-@----------------------------------------------------------------------------
-loadstate:	@called from ui.c
-@void loadstate(int rom#,u32 *stateptr)	 (stateptr must be word aligned)
-@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r7,globalptr,r11,lr}
-
-	mov r6,r1		@r6=where state is at
-	ldr globalptr,=GLOBAL_PTR_BASE
-
-	ldr r1,[r6]             @emuflags
-	bl loadcart		@cart init
-
-	mov r0,#(lstend-savelst)/8	@read entire state
-	adr r4,savelst
-ls1:	ldr r2,[r4],#4
-	ldr r1,[r4],#4
-ls0:	ldr r5,[r6],#4
-	str r5,[r2],#4
-	subs r1,r1,#4
-	bne ls0
-	subs r0,r0,#1
-	bne ls1
-
-	ldr_ r2,rombase		@adjust ptr shit (see savestate above)
-	bl fixromptrs
-
-	ldr r3,=XGB_VRAM	@init tiles+tilemaps
-	mov r4,#0x8000
-ls3:	ldrb r0,[r3],#1
-	mov addy,r4
-	bl vram_W
-	add r4,r4,#1
-	tst r4,#0x2000
-	beq ls3
-
-	bl resetlcdregs
-
-	ldmfd sp!,{r4-r7,globalptr,r11,lr}
-	bx lr
- .endif
-
-@----------------------------------------------------------------------------
-@m0000	DCD 0x1102,XGB_VRAM+0x1800,XGB_VRAM+0x1800,XGB_VRAM+0x1800,XGB_VRAM+0x1800
-@		DCD AGB_BG1+0x0000,AGB_BG1+0x0000,AGB_BG1+0x0000,AGB_BG1+0x0000
 
 @----------------------------------------------------------------------------
 DMGBIOS:

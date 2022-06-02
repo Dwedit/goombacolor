@@ -46,9 +46,6 @@
 // VISOLY = 1
 // .endif
 
- SAVESTATES	= 0
-
-
 @BUILD		SETS "DEBUG"/"GBA"	(defined at cmdline)
 @----------------------------------------------------------------------------
 

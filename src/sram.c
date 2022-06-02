@@ -180,7 +180,7 @@ void probe_sram_size()
 		if (val1 == STATEID || val1 == STATEID2)
 		{
 			sram[0] = (val1^(STATEID^STATEID2)) & 0xFF;
-			newval2 = sram2[0]+(sram2[1]<<8)+(sram2[2]<<16)+(sram2[3]<<24);
+			newval2 = (val2 & 0xFFFFFF00) | sram2[0];
 			//value has changed => 32k save is mirrored
 			if (newval2 != val2)
 			{
