@@ -722,22 +722,22 @@ _FF70R:@		SVBK - CGB Mode Only - WRAM Bank
 @----------------------------------------------------------------------------
 joy0_W:		@FF00
 @----------------------------------------------------------------------------
-	orr r0,r0,#0xCF
 	mov r2,#0x0
 	ldrb_ r1,joy0state
 	tst r0,#0x10		@Direction
 	orreq r2,r2,r1,lsr#4
 	tst r0,#0x20		@Buttons
 	orreq r2,r2,r1
-
+	orr r1,r0,#0xCF
 	and r2,r2,#0x0F
-	eor r2,r2,r0
+	eor r2,r2,r1
 	ldrb_ r1,joy0serial
 	strb_ r2,joy0serial
-	
-	bx lr
+joy0_W_modify:
+	bx lr	@executes either "bx lr" or "ldr pc,=SGB_transfer_bit"
+	.word SGB_transfer_bit
 @----------------------------------------------------------------------------
-joy0_R_SGB: @FF00
+joy0_R_SGB_Multiplayer: @FF00
 @----------------------------------------------------------------------------
 	ldrb_ r1,lineslow
 	orr r1,r1,#0x04
@@ -1092,13 +1092,20 @@ IO_reset:
 
 	ldrb_ r0,sgbmode
 	movs r0,r0
-	ldreq r0,=joy0_W
-	ldrne r0,=joy0_W_SGB
+	
+	@reset SGB joypad mode to single player mode
+	ldr r0,=joy0_W
 	ldr r1,=joypad_write_ptr
 	str r0,[r1]
-	ldreq r0,=joy0_R
-	ldrne r0,=joy0_R_SGB
+
+	ldr r0,=joy0_R
 	ldr r1,=joypad_read_ptr
+	str r0,[r1]
+	
+	@make joy0_W proceed to SGB_transfer_bit in SGB mode, otherwise function returns with "bx lr"
+	ldreq r0,bx_lr_instruction
+	ldrne r0,ldr_pc_instruction
+	ldr r1,=joy0_W_modify
 	str r0,[r1]
 	
 	ldr r1,=io_write_tbl
@@ -1153,7 +1160,12 @@ IO_reset:
 	ldr r0,=_FF70W
 	str r0,[r1,#0x70*4] @wram bank
 1:
+bx_lr_instruction:
 	bx lr
+ldr_pc_instruction:
+	ldr pc,0f
+0:
+
 
 @----------------------------------------------------------------------------
 _FF01W:@		SB - Serial Transfer Data

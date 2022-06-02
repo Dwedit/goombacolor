@@ -10,8 +10,7 @@
 	@IMPORT move_ui
 
 	.global auto_border
-	.global joy0_W_SGB
-	.global joy0_R_SGB
+	.global joy0_W_SGB_Multiplayer
 	.global g_update_border_palette
 	.global sgb_reset
 	.global g_sgb_mask
@@ -183,7 +182,7 @@ sgb_reset:
 @	@mov pc,lr
 
 @----------------------------------------------------------------------------
-joy0_W_SGB:		@FF00
+joy0_W_SGB_Multiplayer:		@FF00
 @----------------------------------------------------------------------------
 	and r0,r0,#0x30
 
@@ -229,14 +228,33 @@ joy0_W_SGB:		@FF00
 0:
 	ldrb_ r1,joy0serial
 	strb_ r0,joy0serial
+@	b SGB_transfer_bit
+@@----------------------------------------------------------------------------
+@joy0_W_SGB_SinglePlayer:	@FF00
+@@----------------------------------------------------------------------------
+@	mov r2,#0x0
+@	ldrb_ r1,joy0state
+@	tst r0,#0x10		@Direction
+@	orreq r2,r2,r1,lsr#4
+@	tst r0,#0x20		@Buttons
+@	orreq r2,r2,r1
+@	orr r1,r0,#0xCF
+@	and r2,r2,#0x0F
+@	eor r2,r2,r1
+@	ldrb_ r1,joy0serial
+@	strb_ r2,joy0serial
 @----------------------------------------------------------------------------
 SGB_transfer_bit:
 @----------------------------------------------------------------------------
 @r0 = current write
 @r1 = previous write
 	ands r0,r0,#0x30
-	and r1,r1,#0x30
+	ldrb_ r2,packetstate
 	beq resetpacket
+	@exit early if we're not in a packet
+	movs r2,r2
+	bxeq lr
+	and r1,r1,#0x30
 	cmp r0,#0x30
 	bxeq lr
 	@current = 10 or 20, if previous isn't equal to current or 30, invalid packet.
@@ -312,7 +330,7 @@ invalidpacket: @this will happen
 	bx lr
 
 resetpacket:
-	ldrb_ r2,packetstate
+	@ldrb_ r2,packetstate
 	cmp r2,#3
 	beq nextpacketpart
 	
@@ -357,10 +375,19 @@ NULL:
 
 MLT_REQ:   @Controller 2 Request
 	ldrb r0,[addy,#1]
-	and r0,r0,#3
-	cmp r0,#2 @requests 3 players?  shouldn't happen, but make it 4.
-	moveq r0,#3
+	ands r0,r0,#3
+	@cmp r0,#2 @requests 3 players?  shouldn't happen, but make it 4.
+	@moveq r0,#3
 	strb_ r0,player_mask
+	
+	ldreq r0,=joy0_W
+	ldrne r0,=joy0_W_SGB_Multiplayer
+	ldr r1,=joypad_write_ptr
+	str r0,[r1]
+	ldreq r0,=joy0_R
+	ldrne r0,=joy0_R_SGB_Multiplayer
+	ldr r1,=joypad_read_ptr
+	str r0,[r1]
 	bx lr
 PAL01:     @Set SGB Palette 0,1 Data
 	ldr r2,=SGB_PALETTE+2
